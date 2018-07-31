@@ -2,23 +2,16 @@ var mongoose = require('mongoose')
 var Schema = mongoose.Schema
 var product = new Schema({
     imagePath: {
-        type: String,
-        required: true,
-        unique: true
+        type: String
     },
     title: {
-        type: String,
-        required: true,
-        unique: true
+        type: String
     },
     description: {
-        type: String,
-        required: true,
-        unique: true
+        type: String
     },
     price: {
-        type: Number,
-        required: true
+        type: Number
     }
 })
 module.exports = mongoose.model('product',product)

@@ -12,7 +12,20 @@
     <body>
       <div class="container">
           <%- include('partials/header') %>
-          <h1><%= title %></h1>
+            <div class="row">
+          <% products.forEach((product)=>{ %>
+                <div class="col-sm-6 col-md-4">
+                  <div class="thumbnail">
+                    <img src="<%= product[0] %>" alt="" width="200px">
+                    <div class="caption">
+                      <h3><%=product[1] %></h3>
+                      <p><%=product[2]%></p>
+                      <p><a href="#" class="btn btn-primary" role="button">Mua</a> <a href="#" class="btn btn-default" role="button">Xem chi tiết</a></p>
+                    </div>
+                  </div>
+                </div>
+            <% }) %>
+            </div>
       </div>
     </body>
 </html>
