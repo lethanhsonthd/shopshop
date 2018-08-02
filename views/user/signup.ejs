@@ -17,7 +17,10 @@
                 <h1>
                     Sign up
                 </h1>
-                <form action="" method="post">
+                    <% if (message!=''){ %>
+                        <h2> <%= message %> </h2>    
+                    <%  } %>
+                <form action="/users/signup" method="post">
                     <div class="form-group">
                         <label for="email">E-mail</label>
                         <input type="text" id="email" name="email" class="form-control">

@@ -8,14 +8,18 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var session = require('express-session')
 var cookie = require('cookie-parser')
+var passport = require('passport')
+var flash = require('express-flash')
 var app = express();
 mongoose.connect('mongodb://localhost:27017/shoppingcart',(err)=>{
   if (err) console.log(err)
   console.log('Connect database successfully')
 })
+require('./config/passport')
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -28,9 +32,11 @@ app.use(cookie({
   keys: [],
   maxAge: 24*60*60*100
 }))
-
+app.use(passport.initialize())
+app.use(passport.session())
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use(flash())
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
