@@ -10,12 +10,12 @@ var session = require('express-session')
 var cookie = require('cookie-parser')
 var passport = require('passport')
 var flash = require('express-flash')
+var validator = require('validator')
 var app = express();
 mongoose.connect('mongodb://localhost:27017/shoppingcart',(err)=>{
   if (err) console.log(err)
-  console.log('Connect database successfully')
+  console.log('Connect to database successfully')
 })
-require('./config/passport')
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -34,10 +34,21 @@ app.use(cookie({
 }))
 app.use(passport.initialize())
 app.use(passport.session())
+require('./config/passport')
+app.use((req,res,next)=>{
+  res.locals.sessionFlash = req.session.sessionFlash
+  delete req.session.sessionFlash
+  next()
+})
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use(flash())
-
+app.use(session({
+  cookie: {maxAge: 60000},
+  saveUninitialized: true,
+  resave: 'true',
+  secret: 'secret'
+}))
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
