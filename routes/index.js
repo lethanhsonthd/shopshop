@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var Product = require('../models/product')
-var csrfProtection = require('csurf')()
 /* GET home page. */
 router.get('/', function(req, res, next) {
   Product.find((err,docs)=>{
@@ -13,16 +12,19 @@ router.get('/', function(req, res, next) {
           resolve(productArr)
         }
         done++
-        productArr.push(new Array(docs[i].imagePath,docs[i].title,docs[i].description,docs[i].price))
+        //productArr.push(new Array(docs[i].imagePath,docs[i].title,docs[i].description,docs[i].price))
+        productArr.push(new Object({
+          id: docs[i].id,
+          imagePath: docs[i].imagePath,
+          title: docs[i].title,
+          description: docs[i].description,
+          price: docs[i].price
+        }))
       }
-      reject(console.log('fail'))
     })
     promise.then((data)=>{
       res.render('index',{title: 'Shopping Cart', products: data})
     })
   })
 });
-router.get('user/signup',(req,res,next)=>{
-  res.render('user/signup',{csrf: req.csrfToken})
-})
 module.exports = router;

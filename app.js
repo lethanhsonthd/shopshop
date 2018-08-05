@@ -6,13 +6,16 @@ var logger = require('morgan');
 var mongoose = require('mongoose')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var cartRouter = require('./routes/cart')
 var session = require('express-session')
 var cookie = require('cookie-parser')
 var passport = require('passport')
 var flash = require('express-flash')
 var validator = require('validator')
+var mongoStore = require('connect-mongo')(session)
+var config = require('./config/dbs')
 var app = express();
-mongoose.connect('mongodb://localhost:27017/shoppingcart',(err)=>{
+mongoose.connect(config.dbURL,(err)=>{
   if (err) console.log(err)
   console.log('Connect to database successfully')
 })
@@ -26,7 +29,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({secret: 'suppersecret', resave: false, saveUninitialized: false}))
+app.use(session({
+  secret: 'suppersecret',
+  resave: false,
+  saveUninitialized: false,
+  store: new mongoStore({
+    url: config.dbURL
+  })
+}))
 app.use(cookie({
   name: 'session',
   keys: [],
@@ -34,7 +44,6 @@ app.use(cookie({
 }))
 app.use(passport.initialize())
 app.use(passport.session())
-require('./config/passport')
 app.use((req,res,next)=>{
   res.locals.sessionFlash = req.session.sessionFlash
   delete req.session.sessionFlash
@@ -42,6 +51,7 @@ app.use((req,res,next)=>{
 })
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/add-to-cart',cartRouter)
 app.use(flash())
 app.use(session({
   cookie: {maxAge: 60000},

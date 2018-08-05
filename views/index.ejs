@@ -16,11 +16,12 @@
           <% products.forEach((product)=>{ %>
                 <div class="col-sm-6 col-md-4">
                   <div class="thumbnail">
-                    <img src="<%= product[0] %>" alt="" width="200px">
+                    <img src="<%= product.imagePath %>" alt="" width="200px">
                     <div class="caption">
-                      <h3><%=product[1] %></h3>
-                      <p><%=product[2]%></p>
-                      <p><a href="#" class="btn btn-primary" role="button">Mua</a> <a href="#" class="btn btn-default" role="button">Xem chi tiết</a></p>
+                      <h3><%=product.title %></h3>
+                      <p><%=product.description%></p>
+                      <p><a href="/add-to-cart/<%= product.id %>"class="btn btn-primary" role="button">Mua</a> 
+                      <a href="" class="btn btn-default" role="button">Xem chi tiết</a></p>
                     </div>
                   </div>
                 </div>

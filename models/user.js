@@ -1,14 +1,14 @@
 var mongoose = require('mongoose')
-var SHA256 = require('crypto-js/sha256')
+var CryptoJS = require('crypto-js')
 var Schema = mongoose.Schema
 var userSchema = new Schema({
     email: {type: String, required: true},
     password: {type: String, required: true}
 })
 userSchema.methods.cryptoPassword = function(password){
-    return SHA256(password)
+    return CryptoJS.HmacSHA1(password,'sondeptrai')
 }
 userSchema.methods.validPassword = function(password){
-    return (this.methods.cryptoPassword(password)==userSchema.password)
+    return (String(this.cryptoPassword(password))==this.password)
 }
 module.exports = mongoose.model('User',userSchema)

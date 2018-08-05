@@ -3,12 +3,17 @@ var router = express.Router();
 var csrfProtection = require('csurf')()
 var User = require('../models/user')
 var validator = require('validator')
+var passport = require('../config/passport')
 /* GET users listing. */
 router.use(csrfProtection)
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 })
-
+var checkLogin = ((req,res,next)=>{
+  if (req.isAuthenticated()) next()
+  return res.redirect('/users/signin')
+})
+router.use('/profile',checkLogin)
 router.get('/signup',(req,res,next)=>{
   var f = ''
   if (typeof res.locals.sessionFlash != 'undefined') f = res.locals.sessionFlash.message
@@ -49,10 +54,26 @@ router.post('/signup',(req,res,next)=>{
       })
   })
 })
+var pushUserToSession = ((req,res,next)=>{
+  req.user = user
+  next()
+})
 router.get('/signin',(req,res,next)=>{
   res.render('user/signin',{csrf: req.csrfToken(),title: 'Sign in'})
 })
-router.post('/signin',(req,res,next)=>{
-
+router.post('/signin',((req,res,next)=>{
+  passport.authenticate('local',(err,user,info)=>{
+    if (err) console.log('err')
+    if (!user) console.log('user khong ton tai')
+    if (user){
+      req.logIn(user,(err)=>{
+        if (err) console.log(err)
+        return res.redirect('/')
+      })
+    }
+  })(req,res,next)
+}))
+router.get('/:email',(req,res,next)=>{
+  res.send('ahaha')
 })
 module.exports = router;
